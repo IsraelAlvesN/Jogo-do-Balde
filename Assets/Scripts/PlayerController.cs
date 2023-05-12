@@ -12,20 +12,35 @@ public class PlayerController : MonoBehaviour
     }
     void Update()
     {
+        if (!GameManager.Instance.isGameActive)
+        {
+            return;
+        }
         //input values
         bool isPressedLeft = Input.GetKey(KeyCode.LeftArrow);
         bool isPressedRight = Input.GetKey(KeyCode.RightArrow);
 
         //move player
+        if(isPressedLeft == isPressedRight)
+        {
+            return;
+        }
+
+        float movement = speed * Time.deltaTime;
         if (isPressedLeft)
         {
-            float movement = speed * Time.deltaTime;
-            transform.position += new Vector3(0, 0, -movement);
+            movement *= -1f;
         }
-        if(isPressedRight)
+        transform.position += new Vector3(movement, 0, 0);
+
+        //limit player boundaries
+        float movimentLimit = GameManager.Instance.gameWidth / 2;
+        if(transform.position.x < -movimentLimit)
         {
-            float movement = speed * Time.deltaTime;
-            transform.position += new Vector3(0, 0, movement);
+            transform.position = new Vector3(-movimentLimit, transform.position.y, transform.position.z);
+        }else if (transform.position.x > movimentLimit)
+        {
+            transform.position = new Vector3(movimentLimit, transform.position.y, transform.position.z);
         }
     }
 }
